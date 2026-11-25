@@ -26,6 +26,9 @@ fi
 if [[ "${SKIP_NON_VERSIONED_FILES:-true}" == "true" ]]; then
   args_common+=(--skip-non-versioned-files)
 fi
+if [[ "${DOTNET_INSTALL_VERBOSE:-false}" == "true" ]]; then
+  args_common+=(--verbose)
+fi
 
 versions="${versions//,/ }"
 versions="${versions//;/ }"

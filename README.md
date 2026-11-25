@@ -24,6 +24,7 @@ steps:
     with:
       dotnet-sdk-version: 8.0, 9.0, 11.0.100
       dotnet-cdn: https://s3.moyilong.com/public-lfs/dotnet
+      verbose: true
 
   - name: Check dotnet
     run: dotnet --info
@@ -50,6 +51,7 @@ steps:
 | `dotnet-cdn` | 否 | 空 | 自定义 CDN/feed 地址。非空时会传给 `dotnet-install.sh --azure-feed`；为空时使用官方源。 |
 | `install-dir` | 否 | `$HOME/.dotnet` | SDK 安装目录。 |
 | `skip-non-versioned-files` | 否 | `true` | 为 `true` 时传入 `--skip-non-versioned-files`。 |
+| `verbose` | 否 | `false` | 为 `true` 时传入 `dotnet-install.sh --verbose`，输出更详细的安装日志。 |
 
 ## Outputs
 

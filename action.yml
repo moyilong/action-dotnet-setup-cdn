@@ -17,6 +17,10 @@ inputs:
     description: Whether to pass --skip-non-versioned-files to dotnet-install.sh.
     required: false
     default: "true"
+  verbose:
+    description: Whether to enable verbose output from dotnet-install.sh.
+    required: false
+    default: "false"
 
 outputs:
   dotnet-root:
@@ -34,6 +38,7 @@ runs:
         DOTNET_SDK_VERSION: ${{ inputs.dotnet-sdk-version }}
         DOTNET_INSTALL_DIR: ${{ inputs.install-dir }}
         SKIP_NON_VERSIONED_FILES: ${{ inputs.skip-non-versioned-files }}
+        DOTNET_INSTALL_VERBOSE: ${{ inputs.verbose }}
       run: |
         set -euo pipefail
 
