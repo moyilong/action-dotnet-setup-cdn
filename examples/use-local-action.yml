@@ -1,0 +1,19 @@
+name: Example - Install .NET SDK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Dotnet
+        uses: ./install-dotnet-action
+        with:
+          dotnet-sdk-version: 11.0.100
+          dotnet-cdn: https://s3.moyilong.com/public-lfs/dotnet
+
+      - name: Check dotnet
+        run: dotnet --info
