@@ -1,0 +1,83 @@
+# Install .NET SDK with optional CDN
+
+这是一个可通过 `uses` 调用的 GitHub Composite Action，用 `dotnet-install.sh` 安装指定版本的 .NET SDK，并可选地通过自定义 CDN/feed 下载 SDK 包。
+
+## 文件结构
+
+```text
+install-dotnet-action/
+├── action.yml
+└── README.md
+```
+
+## 用法：仓库内本地 Action
+
+把 `install-dotnet-action/` 放到你的仓库中，然后在 workflow 里这样调用：
+
+```yaml
+steps:
+  - uses: actions/checkout@v4
+
+  - name: Install Dotnet
+    uses: ./install-dotnet-action
+    with:
+      dotnet-sdk-version: 11.0.100
+      dotnet-cdn: https://s3.moyilong.com/public-lfs/dotnet
+
+  - name: Check dotnet
+    run: dotnet --info
+```
+
+## 用法：独立仓库发布后调用
+
+如果你把这个目录内容放到一个独立仓库的根目录，并打 tag，例如 `v1`，其他仓库可以这样使用：
+
+```yaml
+steps:
+  - name: Install Dotnet
+    uses: your-org/install-dotnet-action@v1
+    with:
+      dotnet-sdk-version: 11.0.100
+      dotnet-cdn: https://s3.moyilong.com/public-lfs/dotnet
+```
+
+## Inputs
+
+| 名称 | 必填 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `dotnet-sdk-version` | 是 | 无 | 要安装的 .NET SDK 版本，例如 `11.0.100`。 |
+| `dotnet-cdn` | 否 | 空 | 自定义 CDN/feed 地址。非空时会传给 `dotnet-install.sh --azure-feed`；为空时使用官方源。 |
+| `install-dir` | 否 | `$HOME/.dotnet` | SDK 安装目录。 |
+| `skip-non-versioned-files` | 否 | `true` | 为 `true` 时传入 `--skip-non-versioned-files`。 |
+
+## Outputs
+
+| 名称 | 说明 |
+| --- | --- |
+| `dotnet-root` | 本次安装并写入 `DOTNET_ROOT` 的目录。 |
+
+## 迁移前后的差异
+
+你原来的写法：
+
+```yaml
+- name: Install Dotnet
+  env:
+    DOTNET_CDN: https://s3.moyilong.com/public-lfs/dotnet
+    DOTNET_SDK_VERSION: 11.0.100
+  run: |
+    # ...安装脚本...
+```
+
+改成：
+
+```yaml
+- name: Install Dotnet
+  uses: ./install-dotnet-action
+  with:
+    dotnet-sdk-version: 11.0.100
+    dotnet-cdn: https://s3.moyilong.com/public-lfs/dotnet
+```
+
+后续步骤无需额外设置 `PATH` 或 `DOTNET_ROOT`，Action 会写入 `$GITHUB_PATH` 和 `$GITHUB_ENV`。
+# action-dotnet-setup-cdn
