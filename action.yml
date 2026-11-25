@@ -1,9 +1,9 @@
 name: Install .NET SDK with optional CDN
-description: Install a specific .NET SDK version via dotnet-install.sh, optionally using a custom CDN feed.
+description: Install one or more .NET SDK versions via the bundled install.sh, optionally using a custom CDN feed.
 
 inputs:
   dotnet-sdk-version:
-    description: .NET SDK version to install, for example 11.0.100.
+    description: .NET SDK versions to install, separated by commas, spaces, or newlines (for example 8.0, 9.0.100).
     required: true
   dotnet-cdn:
     description: Optional CDN/feed base URL passed to dotnet-install.sh --azure-feed. Leave empty to use the official feed.
@@ -40,37 +40,5 @@ runs:
         DOTNET_SDK_VERSION="${DOTNET_SDK_VERSION:?请设置 dotnet-sdk-version}"
         DOTNET_INSTALL_DIR="${DOTNET_INSTALL_DIR:-$HOME/.dotnet}"
 
-        installer="$(mktemp)"
-        trap 'rm -f "$installer"' EXIT
-
-        curl -fsSL https://dot.net/v1/dotnet-install.sh -o "$installer"
-
-        args=(
-          --version "$DOTNET_SDK_VERSION"
-          --install-dir "$DOTNET_INSTALL_DIR"
-        )
-
-        if [[ -n "${DOTNET_CDN:-}" ]]; then
-          args+=(--azure-feed "${DOTNET_CDN%/}")
-        fi
-
-        if [[ "${SKIP_NON_VERSIONED_FILES}" == "true" ]]; then
-          args+=(--skip-non-versioned-files)
-        fi
-
-        bash "$installer" "${args[@]}"
-
-        if [[ -n "${GITHUB_ENV:-}" ]]; then
-          echo "DOTNET_ROOT=$DOTNET_INSTALL_DIR" >> "$GITHUB_ENV"
-        fi
-        if [[ -n "${GITHUB_PATH:-}" ]]; then
-          echo "$DOTNET_INSTALL_DIR" >> "$GITHUB_PATH"
-        fi
-        if [[ -n "${GITHUB_OUTPUT:-}" ]]; then
-          echo "dotnet-root=$DOTNET_INSTALL_DIR" >> "$GITHUB_OUTPUT"
-        fi
-
-        export DOTNET_ROOT="$DOTNET_INSTALL_DIR"
-        export PATH="$DOTNET_INSTALL_DIR:$PATH"
-
-        dotnet --info
+        export DOTNET_SDK_VERSION DOTNET_INSTALL_DIR DOTNET_CDN SKIP_NON_VERSIONED_FILES
+        bash "${GITHUB_ACTION_PATH}/install.sh"

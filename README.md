@@ -1,12 +1,13 @@
 # Install .NET SDK with optional CDN
 
-这是一个可通过 `uses` 调用的 GitHub Composite Action，用 `dotnet-install.sh` 安装指定版本的 .NET SDK，并可选地通过自定义 CDN/feed 下载 SDK 包。
+这是一个可通过 `uses` 调用的 GitHub Composite Action，使用仓库内预置的 `install.sh` 安装一个或多个 .NET SDK，并可选地通过自定义 CDN/feed 下载 SDK 包。
 
 ## 文件结构
 
 ```text
 install-dotnet-action/
 ├── action.yml
+├── install.sh
 └── README.md
 ```
 
@@ -21,7 +22,7 @@ steps:
   - name: Install Dotnet
     uses: ./install-dotnet-action
     with:
-      dotnet-sdk-version: 11.0.100
+      dotnet-sdk-version: 8.0, 9.0, 11.0.100
       dotnet-cdn: https://s3.moyilong.com/public-lfs/dotnet
 
   - name: Check dotnet
@@ -45,7 +46,7 @@ steps:
 
 | 名称 | 必填 | 默认值 | 说明 |
 | --- | --- | --- | --- |
-| `dotnet-sdk-version` | 是 | 无 | 要安装的 .NET SDK 版本，例如 `11.0.100`。 |
+| `dotnet-sdk-version` | 是 | 无 | 一个或多个版本，使用逗号、空格或换行分隔。完整版本（如 `11.0.100`）精确安装；`11.0` 或 `11` 自动安装该 channel 的最新 SDK。 |
 | `dotnet-cdn` | 否 | 空 | 自定义 CDN/feed 地址。非空时会传给 `dotnet-install.sh --azure-feed`；为空时使用官方源。 |
 | `install-dir` | 否 | `$HOME/.dotnet` | SDK 安装目录。 |
 | `skip-non-versioned-files` | 否 | `true` | 为 `true` 时传入 `--skip-non-versioned-files`。 |
