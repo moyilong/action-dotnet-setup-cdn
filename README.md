@@ -48,7 +48,7 @@ steps:
 | 名称 | 必填 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | `dotnet-sdk-version` | 是 | 无 | 一个或多个版本，使用逗号、空格或换行分隔。完整版本（如 `11.0.100`）精确安装；`11.0` 或 `11` 自动安装该 channel 的最新 SDK。 |
-| `dotnet-cdn` | 否 | 空 | 自定义 CDN/feed 地址。非空时会传给 `dotnet-install.sh --azure-feed`；为空时使用官方源。 |
+| `dotnet-cdn` | 否 | 空 | 自定义 CDN/feed 地址。非空时会传给 `dotnet-install.sh --azure-feed`；输入 `11.0` 这类 channel 时，还会从 `<cdn>/Sdk/<channel>/latest.version` 解析具体版本，因此整个 SDK 下载过程都走 CDN；为空时使用官方源。 |
 | `install-dir` | 否 | `$HOME/.dotnet` | SDK 安装目录。 |
 | `skip-non-versioned-files` | 否 | `true` | 为 `true` 时传入 `--skip-non-versioned-files`。 |
 | `verbose` | 否 | `false` | 为 `true` 时传入 `dotnet-install.sh --verbose`，输出更详细的安装日志。 |

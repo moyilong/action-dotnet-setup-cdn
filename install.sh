@@ -37,7 +37,21 @@ for version in $versions; do
   if [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+([-.].*)?$ ]]; then
     args=(--version "$version")
   elif [[ "$version" =~ ^[0-9]+\.[0-9]+$ || "$version" =~ ^[0-9]+$ ]]; then
-    args=(--channel "$version" --quality GA)
+    # Channel installs normally resolve the latest SDK through aka.ms. When a
+    # custom CDN is configured, resolve the channel from that CDN instead and
+    # pass the resulting exact version to avoid any Microsoft download.
+    if [[ -n "${DOTNET_CDN:-}" ]]; then
+      channel_version_url="${DOTNET_CDN%/}/Sdk/${version}/latest.version"
+      resolved_version="$(curl -fsSL "$channel_version_url" | tail -n 1 | tr -d '\r')"
+      if [[ ! "$resolved_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+([-.].*)?$ ]]; then
+        echo "Could not resolve a valid SDK version from $channel_version_url" >&2
+        exit 1
+      fi
+      echo "Resolved .NET SDK channel $version to $resolved_version from CDN"
+      args=(--version "$resolved_version")
+    else
+      args=(--channel "$version" --quality GA)
+    fi
   else
     echo "Invalid .NET SDK version: $version (expected X, X.Y, or X.Y.Z)" >&2
     exit 2
