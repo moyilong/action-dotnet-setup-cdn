@@ -83,4 +83,9 @@ steps:
 ```
 
 后续步骤无需额外设置 `PATH` 或 `DOTNET_ROOT`，Action 会写入 `$GITHUB_PATH` 和 `$GITHUB_ENV`。
+
+在 Linux runner 上，Action 会在检测不到 ICU 时通过可用的包管理器安装 ICU
+运行库（Debian/Ubuntu 使用 `libicu-dev`，RPM 系使用 `libicu`，Alpine 使用
+`icu-libs`）。如果 runner 没有包管理器或安装权限，请预先安装 ICU，或显式设置
+`DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=true` 以使用无全球化模式。
 # action-dotnet-setup-cdn
